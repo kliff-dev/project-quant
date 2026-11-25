@@ -1,0 +1,110 @@
+{
+  "status": "offline_research_only",
+  "executable": false,
+  "spec_sha256": "d7701c7251390144b01279d28ae29ccb8ce79d53e3f7ddc790cb7dc518632597",
+  "selected_on_development": null,
+  "later_assessment": {},
+  "families": {
+    "trend_reclaim": {
+      "name": "H4 trend / H1 EMA20 reclaim",
+      "buy": "Completed H4 EMA50>EMA200, H4 close>EMA50, EMA50>its value 5 H4 bars ago; prior H1 close<=prior EMA20, last bullish H1 close>EMA20 and H1 EMA50, last Wilder RSI14 between 50 and 65 inclusive.",
+      "sell": "Reverse H4 bearish conditions; prior H1 close>=prior EMA20, last bearish H1 close<EMA20 and H1 EMA50, last RSI14 between 35 and 50 inclusive."
+    },
+    "trend_sweep": {
+      "name": "H4 trend / H1 failed range break",
+      "buy": "Same completed H4 uptrend; last H1 low strictly below the lowest low of the prior 20 H1 bars, then bullish close strictly above that prior low.",
+      "sell": "Same completed H4 downtrend; last H1 high strictly above the highest high of the prior 20 H1 bars, then bearish close strictly below that prior high."
+    },
+    "range_reentry": {
+      "name": "Low-trend H4 / H1 band reentry",
+      "regime": "Completed H4 abs(EMA50-EMA200)<=2*H4 Wilder ATR14 and abs(EMA50-EMA50 five bars ago)<=0.5*H4 ATR14.",
+      "bands": "Mean of the prior 20 completed H1 closes +/-2 population standard deviations; excludes the signal candle.",
+      "buy": "Regime true, last H1 low<lower band, bullish close>=lower band and <prior mean, Wilder RSI14<=45.",
+      "sell": "Regime true, last H1 high>upper band, bearish close<=upper band and >prior mean, Wilder RSI14>=55."
+    }
+  },
+  "indicators": {
+    "window": "Exactly the last 3000 completed H1 rows (or available prefix, at least 2400 rows and 600 completed H4 bars). H4 grid anchored in UTC; partial H4 bars excluded.",
+    "ema": "Recursive EMA seeded from first observed close, adjust=False; span20/50 H1 and span50/200 H4. Trend slope is five completed H4 bars.",
+    "atr": "Wilder14 with arithmetic first-14-TR seed then alpha1/14 recurrence; first TR is high-low.",
+    "rsi": "Wilder14: arithmetic seed of first14 close differences, smoothed gains/losses with alpha1/14; flat50, all-up100, all-down0."
+  },
+  "filters": "Weekdays 08:00<=decision hour<14:00 Europe/London, last six H1 bars consecutive, enter only next consecutive H1 open. Reject conflicting directions. Prior completed spread>0 and <=2pips, spread plus both slippage reserves <=10% of stop distance.",
+  "sizing": "Initial USD500 per configuration and phase; recalculate 1% ceiling from flat balance, budget floored cents, fixed structural stop from last5 H1 lows/highs with 0.1ATR buffer and chosen ATR floor, short spread allowance. Lots rounded down .01 with .10 cap; unaffordable minimum skipped.100:1 illustrative margin check. TP solved from reserved stop loss and cost allowance.",
+  "holding": "SL/TP only, no trailing/breakeven/partial exits, no time exit, no end-of-data liquidation. One position at a time. Open equity and balance separate. No daily-loss cap silently added.",
+  "configurations": [
+    {
+      "config_id": "trend_reclaim_sl1atr_tp2r",
+      "family": "trend_reclaim",
+      "minimum_stop_atr": 1.0,
+      "reward_r": 2.0
+    },
+    {
+      "config_id": "trend_reclaim_sl1atr_tp1.5r",
+      "family": "trend_reclaim",
+      "minimum_stop_atr": 1.0,
+      "reward_r": 1.5
+    },
+    {
+      "config_id": "trend_reclaim_sl1.5atr_tp2r",
+      "family": "trend_reclaim",
+      "minimum_stop_atr": 1.5,
+      "reward_r": 2.0
+    },
+    {
+      "config_id": "trend_reclaim_sl1.5atr_tp1.5r",
+      "family": "trend_reclaim",
+      "minimum_stop_atr": 1.5,
+      "reward_r": 1.5
+    },
+    {
+      "config_id": "trend_sweep_sl1atr_tp2r",
+      "family": "trend_sweep",
+      "minimum_stop_atr": 1.0,
+      "reward_r": 2.0
+    },
+    {
+      "config_id": "trend_sweep_sl1atr_tp1.5r",
+      "family": "trend_sweep",
+      "minimum_stop_atr": 1.0,
+      "reward_r": 1.5
+    },
+    {
+      "config_id": "trend_sweep_sl1.5atr_tp2r",
+      "family": "trend_sweep",
+      "minimum_stop_atr": 1.5,
+      "reward_r": 2.0
+    },
+    {
+      "config_id": "trend_sweep_sl1.5atr_tp1.5r",
+      "family": "trend_sweep",
+      "minimum_stop_atr": 1.5,
+      "reward_r": 1.5
+    },
+    {
+      "config_id": "range_reentry_sl1atr_tp2r",
+      "family": "range_reentry",
+      "minimum_stop_atr": 1.0,
+      "reward_r": 2.0
+    },
+    {
+      "config_id": "range_reentry_sl1atr_tp1.5r",
+      "family": "range_reentry",
+      "minimum_stop_atr": 1.0,
+      "reward_r": 1.5
+    },
+    {
+      "config_id": "range_reentry_sl1.5atr_tp2r",
+      "family": "range_reentry",
+      "minimum_stop_atr": 1.5,
+      "reward_r": 2.0
+    },
+    {
+      "config_id": "range_reentry_sl1.5atr_tp1.5r",
+      "family": "range_reentry",
+      "minimum_stop_atr": 1.5,
+      "reward_r": 1.5
+    }
+  ],
+  "warning": "Historical targets are not a future win-rate guarantee. No live strategy/policy/authority changed."
+}

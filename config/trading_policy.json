@@ -1,0 +1,8 @@
+{
+  "risk_percent": 1.0,
+  "reward_to_risk": 2.0,
+  "max_lots": 0.1,
+  "slippage_reserve_points_per_side": 2,
+  "additional_cost_reserve_fraction": 0.05,
+  "maximum_cost_fraction_of_stop": 0.1
+}

@@ -1,0 +1,2 @@
+# Optional Windows-only terminal integration. No API keys or subscription required.
+MetaTrader5==5.0.6231; sys_platform == "win32"

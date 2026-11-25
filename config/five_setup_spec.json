@@ -1,0 +1,172 @@
+{
+  "schema_version": 1,
+  "profile": "multi_setup_v1",
+  "status": "Experimental DEMO hypotheses derived from prior R1-R5 research; no established profitability or weekday advantage.",
+  "registered_date_manila": "2026-11-23",
+  "priority": [
+    "trend_reclaim",
+    "trend_sweep",
+    "channel_breakout",
+    "compression_breakout",
+    "range_reentry"
+  ],
+  "input_contract": "Completed, timezone-aware, unique, increasing bid OHLC bars with nonnegative broker spread/tick-volume/real-volume fields. Native execution independently verifies quote and decision freshness. Bounded input reserves one row: current and previous snapshots each seed indicators from 1199 Gold / 2999 EURUSD observations. ATR/RSI use arithmetic-seeded Wilder smoothing; EMA uses first-observation seeding.",
+  "selection": {
+    "transition": "Only a new directional condition triggers. A direction already present on the previous completed candle is recorded but cannot trigger another entry.",
+    "opposition": "Opposite current raw setup directions reject the whole candle, even if one is persistent.",
+    "overlap": "Same-direction fresh signals choose the first setup in the declared priority. Record all overlapping signals, but allow at most one candidate per symbol/candle.",
+    "no_fallback": "If the chosen candidate fails sizing, target-room, cost or broker checks, do not try another setup on that candle. No order retry.",
+    "no_extra_budget": "Setups share the authorized account budget and position capacity. A setup is not a separate account or an extra risk allowance."
+  },
+  "calendar": {
+    "weekends": "Reject decisions on UTC Saturday and Sunday; native broker-session checks remain mandatory.",
+    "weekdays": "Monday-Friday use observed regime and affordability, not an assumed best weekday. No weekday win-rate boost is encoded.",
+    "sessions": "Record DST-aware Europe/London and America/New_York local time. Descriptive labels use London 07:00-17:00 and New York 08:00-17:00, including overlap. These labels do not gate execution or represent an exchange calendar.",
+    "month": "Record decision month for later descriptive analysis. No month or seasonal performance claim is encoded.",
+    "news": "No live economic-event calendar is available to this pure kernel. Volatility/shock controls cannot guarantee avoidance of news or stop-loss gaps."
+  },
+  "instruments": {
+    "EURUSDm": {
+      "entry_timeframe": "H1",
+      "context_timeframe": "H4",
+      "input_rows": 3000,
+      "context_min_rows": 600,
+      "common_guards": {
+        "volatility_ratio_min": 0.5,
+        "volatility_ratio_max": 2.0,
+        "volatility_definition": "Current H1 ATR14 divided by median of last 100 H1 ATR14 values.",
+        "shock_atr_max": 3.0,
+        "recent_contiguous_bars": 6,
+        "channel_contiguous_bars": 21,
+        "context": "H4 candles require exactly four H1 observations and must have closed by decision time. No partial context or interpolated candles; stale context rejects.",
+        "flat_quotes": "A zero-range quote candle in the last six H1 bars rejects all setups."
+      },
+      "regimes": {
+        "range": "Low-trend / range-eligible H4: absolute EMA50-EMA200 distance <=2.0 H4 ATR14 and absolute five-H4-bar EMA50 change <=0.50 H4 ATR14. This restores the preregistered EUR-specific definition in reports/market_analysis/candidate_strategy_spec_2026-11-14.json, families.range_reentry.regime; it is not a proven sideways market.",
+        "trend_up": "Outside range: H4 EMA50>EMA200, last complete H4 close>EMA50 and five-bar EMA50 change>0.",
+        "trend_down": "Outside range: H4 EMA50<EMA200, last complete H4 close<EMA50 and five-bar EMA50 change<0.",
+        "mixed": "Neither range nor aligned directional trend; only a non-opposed compression breakout may qualify.",
+        "precedence": "Exclusive precedence: range eligibility suppresses trend_long/trend_short, so these low-trend periods cannot borrow the trend-only 2% minimum-lot rescue or 3R-4R targets. No simultaneous trend/range classification. This may reduce trend-family eligibility relative to the earlier overlapping research classifiers.",
+        "provenance": "The prior frozen candidate specification, analytics/candidate_signals.py and analytics/activation_signals.py used 2.0 ATR / 0.50 ATR H4 thresholds. The tighter new 0.75 / 0.20 values were removed before activation as a provenance correction, not selected by favorable trade outcomes. Gold remains unchanged at 0.75 / 0.20 on M15."
+      },
+      "setups": {
+        "trend_reclaim": {
+          "name": "EUR/USD trend EMA reclaim",
+          "research_origin": "R1 and the existing EUR/USD reclaim setup.",
+          "rule": "BUY: H4 uptrend, bullish H1 candle; previous H1 close<=its EMA20, current close>EMA20 and EMA50, RSI14 50-65. SELL reverses price/trend tests and uses RSI14 35-50.",
+          "market_conditions": "A pullback followed by recovery in an observed H4 trend, outside the exclusive low-trend / range-eligible regime.",
+          "stop": "Existing native structural stop: BUY min(last five lows-0.1 ATR, ask-1 ATR); SELL max(last five highs+current spread+0.1 ATR, bid+1 ATR), rounded outward to broker tick.",
+          "target": "Existing adaptive native 1R-4R target selector, subject to confirmed H4 obstacles, trend/volatility and costs. A target is a rule, not a forecast.",
+          "limitations": "Late trend reversals, news and false recoveries can lose. The engine can reject a technical signal for costs or sizing."
+        },
+        "trend_sweep": {
+          "name": "EUR/USD trend sweep and recovery",
+          "research_origin": "R2 and the existing trend_sweep setup.",
+          "rule": "BUY: H4 uptrend; H1 low strictly below the lowest low of the prior 20 H1 candles, then bullish close strictly above that low. SELL reverses the high/low and candle tests. The current candle is excluded from prior range.",
+          "market_conditions": "Directional H4 trend plus an observed failed extension against that trend. Require 21 contiguous H1 candles for the channel comparison.",
+          "stop": "Same preserved native five-candle structural/1 ATR minimum stop as EUR/USD reclaim; never tighten a stop merely to fit a lot.",
+          "target": "Existing adaptive 1R-4R target selector with confirmed H4 room and unchanged cost checks.",
+          "limitations": "A sweep is a price pattern, not proof of stop hunting, institutional activity or a reversal. Previously tested variants lacked a proven edge."
+        },
+        "channel_breakout": {
+          "name": "EUR/USD trend channel breakout",
+          "research_origin": "R3 Donchian-style 20-candle channel breakout, adapted to complete H4 context.",
+          "rule": "BUY: H4 uptrend and bullish H1 close strictly above prior 20-candle highest high, no more than 0.5 current H1 ATR beyond it. SELL: H4 downtrend and bearish close below prior lowest low, within 0.5 ATR. No repeated persistent-condition entry.",
+          "market_conditions": "Directional context and a fresh bounded channel escape. Require 21 contiguous H1 candles; reject an extended chase candle.",
+          "stop": "Preserved native five-candle structural/1 ATR minimum stop. A broad channel may produce an unaffordable minimum lot and be skipped.",
+          "target": "Existing 1R-4R adaptive native target and confirmed H4 obstacle checks; an apparently open channel alone does not authorize a large target.",
+          "limitations": "False breakouts and spread expansion remain possible. This branch is an exploratory hypothesis, not a verified profitable system."
+        },
+        "compression_breakout": {
+          "name": "EUR/USD compression release",
+          "research_origin": "R4 volatility-compression breakout; the squeeze is measured before the breakout candle.",
+          "rule": "Previous 20-close bandwidth (4 population-standard-deviations/mean) <=20th percentile of the preceding 120 bandwidth values. BUY bullish close above prior 20-high within 0.5 ATR, with no opposing H4 downtrend. SELL mirrors below prior 20-low without H4 uptrend.",
+          "market_conditions": "A historically narrow local price distribution followed by a fresh channel release. Range/mixed context may qualify; opposed directional context cannot.",
+          "stop": "Preserved native five-candle structural/1 ATR minimum stop, without reducing it to manufacture a larger lot.",
+          "target": "Existing adaptive native target, capped at 4R and constrained by confirmed H4 obstacles/costs; the breakout is not assumed to continue.",
+          "limitations": "Compression can lead to repeated false releases. The 20th-percentile threshold is frozen for this version, not optimized on later outcomes."
+        },
+        "range_reentry": {
+          "name": "EUR/USD low-trend band re-entry",
+          "research_origin": "R5 and the preregistered EUR H4 range_reentry family: reports/market_analysis/candidate_strategy_spec_2026-11-14.json, families.range_reentry.regime (registered 2026-11-14 before candidate outcomes). Preserve its 2.0 ATR separation / 0.50 ATR five-bar slope definition, with exclusive low-trend precedence in this version.",
+          "rule": "BUY in range regime: low below prior 20-close mean-2 population standard deviations, bullish close back at/above lower band but below mean, RSI14<=45. SELL: high above upper band, bearish close at/below upper band but above mean, RSI14>=55. Current candle is excluded from the bands.",
+          "market_conditions": "Low-trend / range-eligible H4 EMA separation <=2.0 H4 ATR14 and absolute five-bar EMA50 change <=0.50 H4 ATR14, with exclusive precedence over trend families. This is not proof that price is sideways or likely to revert. Require 21 contiguous H1 candles.",
+          "stop": "Same preserved native structural/ATR stop; sizing and all broker checks remain mandatory.",
+          "target": "Existing conservative native target selection, capped at 2R because this exclusive regime has no aligned trend flag; confirmed H4 obstacles can reject it entirely. No guaranteed return to the mean.",
+          "limitations": "Ranges can become trends. Band width, RSI and a wick do not establish fair value or predict a rebound."
+        }
+      }
+    },
+    "XAUUSDm": {
+      "entry_timeframe": "M5",
+      "context_timeframe": "M15",
+      "input_rows": 1200,
+      "context_min_rows": 250,
+      "common_guards": {
+        "volatility_ratio_min": 0.75,
+        "volatility_ratio_max": 1.75,
+        "volatility_definition": "Current M5 ATR14 divided by median of last 100 M5 ATR14 values; the previous Gold safety range is preserved.",
+        "shock_atr_max": 2.5,
+        "recent_contiguous_bars": 6,
+        "channel_contiguous_bars": 21,
+        "context": "M15 candles require exactly three M5 observations and must have closed by decision time. No partial context or interpolated candles; stale context rejects.",
+        "flat_quotes": "A zero-range quote candle in the last six M5 bars rejects all setups."
+      },
+      "regimes": {
+        "range": "Absolute M15 EMA50-EMA200 distance <=0.75 M15 ATR14 and absolute five-M15-bar EMA50 change <=0.20 M15 ATR14.",
+        "trend_up": "Outside range: M15 EMA50>EMA200, last complete M15 close>EMA50 and five-bar EMA50 change>0.",
+        "trend_down": "Outside range: M15 EMA50<EMA200, last complete M15 close<EMA50 and five-bar EMA50 change<0.",
+        "mixed": "Neither range nor aligned directional trend; only a non-opposed compression breakout may qualify."
+      },
+      "setups": {
+        "trend_reclaim": {
+          "name": "Gold M15 trend / M5 EMA reclaim",
+          "research_origin": "R1 and the existing Gold M15-trend/M5-reclaim setup.",
+          "rule": "BUY: M15 uptrend, bullish M5 candle; previous close<=its EMA20, current close>EMA20 and EMA50, RSI14 50-68. SELL reverses price/trend tests and uses RSI14 32-50.",
+          "market_conditions": "A local pullback recovery within complete M15 directional context, excluding the flat range regime and common Gold volatility/shock failures.",
+          "stop": "Existing native structural stop: BUY min(last three lows-0.2 ATR, ask-1.2 ATR); SELL max(last three highs+current spread+0.2 ATR, bid+1.2 ATR), rounded outward to broker tick.",
+          "target": "Existing Gold native 1R-4R selector with confirmed M15 obstacle room, trend/volatility and cost checks.",
+          "limitations": "Gold minimum lot can exceed the per-trade budget. A valid pattern is skipped if it cannot be afforded safely."
+        },
+        "trend_sweep": {
+          "name": "Gold trend sweep and recovery",
+          "research_origin": "R2 and the existing Gold trend_sweep setup.",
+          "rule": "BUY: M15 uptrend; M5 low strictly below the prior 20-M5 lowest low, then bullish close strictly above that low. SELL mirrors the prior high and bearish recovery. No added EMA crossover or RSI requirement.",
+          "market_conditions": "Failed extension against a directional M15 trend. Require 21 contiguous M5 candles and preserved common Gold guards.",
+          "stop": "Preserved native three-candle structural/1.2 ATR minimum Gold stop, not an artificial tighter risk-fitting stop.",
+          "target": "Existing Gold 1R-4R native selector, constrained by confirmed M15 obstacles and costs.",
+          "limitations": "Price sweeps do not identify who traded or guarantee continuation. Wide sweep stops may be unaffordable at the minimum lot."
+        },
+        "channel_breakout": {
+          "name": "Gold trend channel breakout",
+          "research_origin": "R3 Donchian-style breakout adapted to M5 entries and complete M15 context.",
+          "rule": "BUY: M15 uptrend and bullish M5 close strictly above prior 20-high, no more than 0.75 current M5 ATR above it. SELL: M15 downtrend and bearish close below prior 20-low, within 0.75 ATR. Only a new condition triggers.",
+          "market_conditions": "Directional context with a fresh channel escape; require 21 contiguous M5 candles. Gold receives a wider chase allowance than EUR/USD but unchanged shock guards.",
+          "stop": "Preserved native three-candle structural/1.2 ATR minimum stop. Stops, sizing and minimum-lot rescue are evaluated by the existing protected engine.",
+          "target": "Existing Gold 1R-4R target, with confirmed M15 obstacle room and unchanged cost gates.",
+          "limitations": "Gold can reverse sharply after channel breaks. Faster decision frequency does not imply a higher win rate."
+        },
+        "compression_breakout": {
+          "name": "Gold compression release",
+          "research_origin": "R4 prior-window compression release adapted to Gold volatility and M15 context.",
+          "rule": "Previous 20-close bandwidth (4 population-standard-deviations/mean) <=20th percentile of the preceding 120 widths. BUY bullish M5 close above prior 20 high within 0.75 ATR, without opposing M15 downtrend. SELL mirrors below prior 20 low without M15 uptrend.",
+          "market_conditions": "A narrow local distribution followed by a fresh directional escape; mixed/range context is allowed, opposite context trend is vetoed. Preserve Gold ATR 0.75-1.75 and shock 2.5 guards.",
+          "stop": "Preserved native three-candle structural/1.2 ATR minimum Gold stop. No attempt to spend the whole risk ceiling.",
+          "target": "Existing Gold target selector capped at 4R with actual confirmed M15 obstacle room and costs; limited room rejects the candidate.",
+          "limitations": "Compression and the eventual breakout direction are not forecasts. A low ATR-ratio market can still be rejected despite a squeeze."
+        },
+        "range_reentry": {
+          "name": "Gold flat-regime band re-entry",
+          "research_origin": "R5 range re-entry adapted to flat completed M15 context and M5 rejection candles.",
+          "rule": "BUY in range regime: M5 low below prior 20 close mean-2 population standard deviations, bullish close back at/above lower band but below mean, RSI14<=45. SELL mirrors upper band with RSI14>=55. Exclude signal candle from the bands.",
+          "market_conditions": "Flat M15 EMA separation and slope. Require 21 contiguous M5 candles; all Gold volatility and shock gates remain in force.",
+          "stop": "Preserved native three-candle structural/1.2 ATR minimum stop; never add a position without a valid account-risk allocation.",
+          "target": "Existing Gold selector generally stays at 1R in flat context and still requires obstacle room. No assumed return to the mean or forced target.",
+          "limitations": "Range breaks, gold news shocks and minimum-lot affordability can invalidate this setup. Historical pattern counts do not prove expected profit."
+        }
+      }
+    }
+  },
+  "shared_risk": "DEMO only. Existing 1% baseline; qualified minimum-lot-only rescue up to 2% per trade. Maximum 2 EURUSD and 2 Gold positions, 4 total, 8% combined planned loss including current protected exposures. Fresh quote, account identity, hedging mode, verified SL/TP, spread/slippage, target room, margin and no-retry guards remain mandatory. Costs and gaps can exceed planned losses.",
+  "performance": "More eligible patterns increase hypotheses to test, not guaranteed entry count or profitability. Prior history was already examined, so descriptive development/split statistics are not clean independent validation. Preserve setup, regime, weekday, session and actual net cashflows for later forward evaluation. Restoring the earlier EUR-specific regime corrects a newly introduced overly restrictive transfer from a different context; observed coverage counts justify inspecting feasibility, not a win-rate or profit claim."
+}

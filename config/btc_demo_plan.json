@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "demo_only": true,
+  "symbol": "BTCUSDm",
+  "mode": "btc_demo_series",
+  "risk_percent": 1,
+  "maximum_open_positions": 1,
+  "maximum_lots": 0.1,
+  "maximum_session_hours": 24,
+  "reward_r": 2,
+  "slippage_price": 2,
+  "fee_reserve_fraction": 0.05,
+  "account_mode": "exclusive_btc",
+  "setup_ids": [
+    "B1",
+    "B2",
+    "B3",
+    "B4"
+  ],
+  "source_sha256": {
+    "engine/btc_demo.py": "ee664111b4b9eef19df8924923fa30f9e50646c2b287887f5f9ab32d72ce6d94",
+    "analytics/btc_setups.py": "ff5ee974332ae676064e6bcdbb08f75252d36713e67b73013a563e15695a3e15",
+    "analytics/candidate_signals.py": "4d7042ec4d3e5ba2898a9a350635bdb23d899a617323852e8042bda6d7f803c1",
+    "scripts/activate_btc_demo.py": "86ab5f49dcc05000bf9cd75ed007eba791a477223308cdee67c09a6954bc1ef8",
+    "scripts/app_btc_session.py": "cd4bfd85f937880cbcd25b5edec022ada985617c6e7a9cf2df330a2f610e3378",
+    "dashboard/btc_control.py": "7cdc41544f99baf17e6c6110e261df457be09be4f2959446b487873a6a8b7d8a",
+    "dashboard/monitor_control.py": "bf4ac121d16b04edb658e589527b0a819abbc6b1cd2c0a6a11a2f682570660c5",
+    "engine/execution_state.py": "13c545175dd19568ded9ecd26b8a27ce5bae2970bccfa001015edc4a4b604a16"
+  }
+}

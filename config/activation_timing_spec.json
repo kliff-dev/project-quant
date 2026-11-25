@@ -1,0 +1,26 @@
+{
+  "version": "user_activation_v1",
+  "activation": "Explicit user command; starts immediately; expires after six hours; no automatic restart.",
+  "clock_gates": [],
+  "removed": [
+    "London-hour and weekday entry filters",
+    "Gold routine US clock-blackout proxy"
+  ],
+  "retained": [
+    "Original technical setup and indicator thresholds",
+    "Closed candles, warmup, gaps and signal freshness",
+    "Native DEMO account, permissions and fresh quote verification",
+    "Structural stop, native lot sizing, costs and risk caps",
+    "Prior-only swing room and adaptive 1R-4R target selection"
+  ],
+  "symbols": {
+    "EURUSDm": "H4 trend / H1 EMA20 reclaim",
+    "XAUUSDm": "M15 trend / M5 EMA20 reclaim"
+  },
+  "research_status": "New eligibility profile; original clock-filtered backtests do not validate it.",
+  "economic_calendar": "No actual economic-calendar filter or macro/seasonal forecast.",
+  "exit_rules": "Fixed broker SL/TP; stopping/expiry never closes positions.",
+  "risk_percent": 1,
+  "combined_risk_percent": 2,
+  "positions_per_symbol": 1
+}

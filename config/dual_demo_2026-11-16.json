@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "demo_only": true,
+  "session_date": "2026-11-16",
+  "risk_percent": 1,
+  "max_open_positions": 2,
+  "maximum_positions_per_symbol": 1,
+  "maximum_combined_risk_percent": 2,
+  "maximum_reward_r": 4,
+  "user_instruction": "Can you activate the trade on both gold and eurusd?",
+  "position_update_user_instruction": "you can have 2 position open but in gold and eurusd 1 for each. With the same risk management",
+  "windows": {
+    "XAUUSDm": [
+      "2026-11-16T07:00:00+00:00",
+      "2026-11-16T13:00:00+00:00"
+    ],
+    "EURUSDm": [
+      "2026-11-16T08:00:00+00:00",
+      "2026-11-16T14:00:00+00:00"
+    ]
+  },
+  "notes": [
+    "Manually activated local controller may wait for approved entry windows; not an OS scheduled task.",
+    "One verified protected position per instrument; each 1% risk; combined frozen planned risk <=2% current lower balance/equity.",
+    "Native DEMO-only checks, exact pinned account, native margin, valid setup, fresh candle, SL/TP and no retries remain mandatory.",
+    "Gold 15:00-21:00 Manila; EURUSD 16:00-22:00 Manila, Monday 16 November only. Session end does not close positions."
+  ],
+  "source_sha256": {
+    "config/gold_demo_plan.json": "4d21d5cf1a2d619768025a85d91c8c3d6079d6708c5671d0292d12fdecc9da17",
+    "config/monday_demo_2026-11-16.json": "1f86856ce74369c76e421cbbe5b3adddf8a9a2ab9cfafe207d00cade4e182f1d",
+    "engine/dual_demo.py": "cbea4a2f0d7336d34b03b2802bad2f318ddf1db878a376b8befc34f47ec4471b",
+    "engine/portfolio_guard.py": "01810261fc8002cbbd09adfd8040d3a535eaeedb167850abb92393de15b31fdf",
+    "scripts/start_dual_demo.py": "5feee54d3c420a153c0fc5750cf2a84a6bbf993aed36c14cd801533340e0333d"
+  }
+}

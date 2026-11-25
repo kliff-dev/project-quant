@@ -1,0 +1,17 @@
+{
+  "version": "reclaim_sweep_v1",
+  "registered_date_manila": "2026-11-18",
+  "registered_before_new_comparison": true,
+  "purpose": "Two explicitly labeled exploratory DEMO setups; no profitability qualification.",
+  "setups": {
+    "trend_reclaim": "A: existing completed-context trend and entry EMA20 reclaim, including existing RSI gates, unchanged.",
+    "trend_sweep": "B: same completed-context directional trend; buy when the latest entry candle has a low strictly below the previous 20 entry candles' lowest low, then closes bullish and strictly above that prior low; sell is the exact reverse. The signal candle is excluded from the prior range. No EMA20 crossover or additional RSI threshold is imposed on B."
+  },
+  "timeframes": {"EURUSDm": "H4 context / H1 entry", "XAUUSDm": "M15 context / M5 entry"},
+  "shared_filters": "Existing warmup and recent continuity; Gold volatility 0.75-1.75 and maximum 2.5 ATR signal range; exact broker symbol, fresh quote and closed-candle freshness; original structural/ATR stops, adaptive 1R-4R targets, spread/slippage and broker admission checks.",
+  "arbitration": "One decision and at most one send attempt per symbol/candle. Opposite directions skip both. Same-direction overlap chooses A and records B as overlap. Otherwise choose the unique setup. Do not fall back to another setup after planning rejection or a failed/uncertain send.",
+  "risk": "Shared 1% baseline; existing qualified minimum-lot-only exception up to 2%; 2% combined account ceiling; one position per instrument, maximum two account-wide. No extra risk budget per setup.",
+  "documentation": "Record both technical decisions, chosen setup, overlap/conflict and planning rejection; actual trades retain setup identity and broker-verified cashflows. Independent replay accounts are hypothetical and separate from the actual shared-account experiment.",
+  "research": "Compare A alone, B alone and A-priority combined on the same archived period and costs, at USD500 and USD1000. Include doubled-slippage stress for the combined USD500 account. Freeze definitions; no search or tuning after results. History was previously examined and is development data, not a clean holdout. No actual historical financing ledger; retain the existing explicit modeled-cost caveats.",
+  "execution": "DEMO only, existing explicit activation deadline, no forced entry, no order retry, no real account connection or self-modification."
+}

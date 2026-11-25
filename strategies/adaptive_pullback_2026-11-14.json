@@ -1,0 +1,40 @@
+{
+  "status": "offline_research_only",
+  "executable": false,
+  "spec_sha256": "c149c1412cbb1ca78ca9f7bf341c6d251d226cd86da42051d96238fb0dcb17f8",
+  "entry": "Exactly the existing trend_reclaim family in analytics/candidate_signals.py. Completed H4 EMA50/200, H4close vsEMA50 and slope5 define trend. H1 bullish/bearish EMA20 reclaim, H1 EMA50 alignment and WilderRSI14 50..65 BUY/35..50 SELL. No breakout or range-reversal entries and no entry parameter sweep.",
+  "stop_and_risk": "One fixed structural stop: last5 H1 low/high, .1ATR buffer, short spread allowance, minimum1ATR. Same stop, lots, budget and reserve for all candidate targets at a given entry and balance. StartflatUSD500 per account/phase; recalculate1%ceiling, budgetflooredcents, lotsroundeddown.01,cap.10,illustrative100:1margin. No wideningstop to obtain a reward multiple.",
+  "policies": {
+    "fixed_2r": "Always cost-reserved2R on shared1R-room-qualified entries. It may intentionally targetbeyond the historicalreference; this is an exit-policy control, not the original unfiltered account baseline.",
+    "adaptive_1_2_3": "3R if3Rtargetfitsroom AND strong_context AND normal_volatility; otherwise2R if2Rtargetfitsroom; otherwise1R if1Rtargetfitsroom. Otherwise skip. All decisionsbeforeentry. No outcome-basedadjustment."
+  },
+  "obstacle": {
+    "lookback_completed_h4_rows": 120,
+    "swing": "Strictly higher HIGH or lower LOW than both2preceding and2followingH4rows, all5rows within last120time-completedH4rows. Confirmationtime=secondrightrowopen+4h<=decision.",
+    "reference_level_policy": "Retain all confirmed historical swing references, even if previously breached; do not claim they are unbroken support/resistance.",
+    "nearest_directional_price": "BUY nearest swinghigh strictlyabove current executable ASKentry. SELL nearest swinglow, convertedfrombidtoaskusingknownpriorH1spread, strictlybelow current executable BIDentry.",
+    "buffer": "Place targetbefore reference by.1H1ATR: BUYtarget<=swinghigh-buffer; SELLtarget>=swinglow+knownspread+buffer.",
+    "room": "Use actual tick-rounded cost-reserved TP from existingplanner for1/2/3R, not nominal price-distance ratios. No qualifying reference or insufficient1Rroom skips BOTH arms. No unknownroom treatedasinfinite."
+  },
+  "strong_context": "abs(H4EMA50-EMA200)>=1*H4ATR14 AND abs(H4EMA50slope5)>=.25*H4ATR14. Hypothesisonly, not an estimated success probability.",
+  "normal_volatility": "Inclusive.75<=volatility_ratio<=1.5",
+  "assessment": {
+    "development_adaptive_primary_gate": false,
+    "development_adaptive_minus_fixed_mean_r": 0.3407700728103549,
+    "development_adaptive_minus_fixed_equity_usd": 17.43,
+    "development_adaptive_minus_fixed_drawdown_percentage_points": -3.6131678014942996,
+    "validation_adaptive_primary_gate": false,
+    "validation_adaptive_minus_fixed_mean_r": 0.017815710971163412,
+    "validation_adaptive_minus_fixed_equity_usd": 0.51,
+    "validation_adaptive_minus_fixed_drawdown_percentage_points": 0.0,
+    "validation_adaptive_financing_positive": false,
+    "recent_adaptive_primary_gate": false,
+    "recent_adaptive_minus_fixed_mean_r": 0.0017056972154059213,
+    "recent_adaptive_minus_fixed_equity_usd": 0.25,
+    "recent_adaptive_minus_fixed_drawdown_percentage_points": -1.2372387450454547,
+    "recent_adaptive_financing_positive": true,
+    "one_r_development_closed": 7,
+    "one_r_development_gate": false,
+    "deployment_status": "research_only; no automatic deployment; independent future evidence still required"
+  }
+}

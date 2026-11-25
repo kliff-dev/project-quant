@@ -1,0 +1,12 @@
+{
+  "version": "closed_bar_followthrough_v1",
+  "status": "experimental_demo_research",
+  "family": "Existing trend and EMA20 reclaim, confirmed by exactly one following closed entry candle",
+  "symbols": {"XAUUSDm": {"entry_minutes": 5, "input_rows": 1201}, "EURUSDm": {"entry_minutes": 60, "input_rows": 3001}},
+  "seed": "The immediately preceding completed entry candle must satisfy the unchanged user_activation_v1 technical kernel.",
+  "confirmation": "The next consecutive completed candle must close strictly beyond the seed candle high for BUY or low for SELL, in the same candle direction. Current trend, EMA20/50 side, RSI limits and existing volatility/shock/gap gates must still hold.",
+  "expiry": "One candle only. A failed confirmation expires; no later entry, intrabar prediction or price chasing.",
+  "planning": "Use confirmation-time features, fresh bid/ask, structural stop, lot sizing and confirmed swing target room. Do not reuse the old quote or widen an existing position stop.",
+  "unchanged": ["DEMO-only native account verification", "1% baseline risk", "Qualified minimum-lot-only exception up to 2%", "2% combined planned risk", "One position per instrument", "Existing adaptive 1R-4R target selector", "No automatic order retry", "Existing signal freshness and explicit activation deadline"],
+  "research": "Frozen before outcome comparison. Previously inspected archives are development evidence, not an untouched holdout. Report missed winners and avoided losers, costs, trade counts and drawdowns. Do not tune this rule after seeing its result."
+}
